@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+    <property name="log-path" value="logs"/>
+    <property name="log-pattern-file" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p \\(%t\\) [%c\\(%M:%L\\)] - %m%n"/>
+    <property name="output-file-name" value="${log-path}/payclip-assessment-test"/>
+    <!-- Appender's -->
+    <appender name="OutputFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${log-pattern-file}</pattern>
+        </encoder>
+        <file>${output-file-name}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Hour rollover -->
+            <fileNamePattern>${output-file-name}.%d{yyyy-MM-dd-HH}.log.zip</fileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+    </appender>
+    <root level="INFO" additivity="false">
+        <appender-ref ref="OutputFile"/>
+    </root>
+    <logger name="org" level="INFO" additivity="false">
+        <appender-ref ref="OutputFile"/>
+    </logger>
+    <logger name="io" level="INFO" additivity="false">
+        <appender-ref ref="OutputFile"/>
+    </logger>
+    <logger name="com.payclip.assessment" level="DEBUG" additivity="false">
+        <appender-ref ref="OutputFile"/>
+    </logger>
+</configuration>

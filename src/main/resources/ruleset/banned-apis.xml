@@ -1,0 +1,843 @@
+<?xml version="1.0"?>
+<ruleset name="Banned API calls"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+  <description>
+These rules deal with banned api calls.
+  </description>
+
+<rule  name="BAN001"
+language="java"
+message="Avoid using System.out.print* and System.err.print*, use Logger.* instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+starts-with(@Image,'System.out.print') or
+starts-with(@Image,'System.err.print')
+)
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+ public void foo()
+ {
+  System.out.println("Hola");
+  System.err.print("Some error");
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN002"
+language="java"
+  message="Avoid throwing the stackTrace, use Logger.* instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name
+[ends-with(@Image,'.printStackTrace')]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+ public void foo()
+ {
+   try {
+    //some code
+   } catch(Exception e) {
+     e.printStackTrace();
+   }
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN003"
+language="java"
+  message="Avoid Runtime.exec(), use Executor.safeExec() instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>4</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+starts-with(@Image,'Runtime.getRuntime') and
+../../PrimarySuffix[ends-with(@Image,'exec')]
+)
+]
+
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   Runtime.getRuntime().exec("javac");
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN004"
+language="java"
+  message="Avoid Session.getId(), use Randomizer.getRandomString instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'Session') and
+../../PrimarySuffix[ends-with(@Image,'getId')]
+) or
+(contains(@Image,'session.getId'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   //some code
+ }
+
+ public void handleRequest(HttpServletRequest request) {
+   request.getSession().getId();
+   Session session = request.getSession();
+   session.getId();
+ }
+}
+]]>
+  </example>
+</rule>
+
+
+<rule  name="BAN005"
+language="java"
+  message="Avoid ServletRequest.getUserPrincipal(), use Authenticator.getCurrentUser()"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'ServletRequest') and
+../../PrimarySuffix[ends-with(@Image,'getUserPrincipal')]
+) or
+(contains(@Image, 'request.getUserPrincipal'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   getServletRequest().getUserPrincipal();
+  }
+
+ public void handleRequest(HttpServletRequest request) {
+   request.getUserPrincipal();
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN006"
+language="java"
+  message="Avoid ServletRequest.isUserInRole(), use AccessController.isAuthorized()"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'ServletRequest') and
+../../PrimarySuffix[ends-with(@Image,'isUserInRole')]
+) or
+(contains(@Image, 'request.isUserInRole'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   getServletRequest().isUserInRole();
+  }
+
+ public void handleRequest(HttpServletRequest request) {
+   request.isUserInRole();
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN007"
+language="java"
+  message="Avoid Session.invalidate(), use Authenticator.logout() instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'Session') and
+../../PrimarySuffix[ends-with(@Image,'invalidate')]
+) or
+(contains(@Image,'session.invalidate'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   //some code
+ }
+
+ public void handleRequest(HttpServletRequest request) {
+   request.getSession().invalidate();
+   Session session = request.getSession();
+   session.invalidate();
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN008"
+language="java"
+  message="Avoid Math.Random.*, use Randomizer.* instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name
+[starts-with(@Image,'Math.random')]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   Double d = Math.random();
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN009"
+language="java"
+  message="Avoid File.createTempFile(), use Randomizer.getRandomFilename() instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name
+[starts-with(@Image,'File.createTempFile')]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   File f = File.createTempFile();
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN010"
+language="java"
+  message="Avoid ServletResponse.setContentType(), use HTTPUtilities.setContentType()"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'ServletResponse') and
+../../PrimarySuffix[ends-with(@Image,'setContentType')]
+) or
+(contains(@Image, 'response.setContentType'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   getServletResponse().setContentType("application/json");
+  }
+
+ public void handleResponse(HttpServletResponse response) {
+   response.setContentType("application/json");
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN011"
+language="java"
+  message="Avoid ServletResponse.sendRedirect(), use HTTPUtilities.safeSendRedirect() instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'ServletResponse') and
+../../PrimarySuffix[ends-with(@Image,'sendRedirect')]
+) or
+(contains(@Image, 'response.sendRedirect'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   getServletResponse().sendRedirect("/");
+  }
+
+ public void handleResponse(HttpServletResponse response) {
+   response.sendRedirect("/");
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN012"
+language="java"
+  message="Avoid RequestDispatcher.forward(), use HTTPUtilities.safeSendForward() instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'RequestDispatcher') and
+../../PrimarySuffix[ends-with(@Image,'forward')]
+) or
+(contains(@Image, 'requestDispatcher.forward'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   //some code
+  }
+
+ public void handleResponse(HttpServletResponse response) {
+   request.getRequestDispatcher("index.jsp").forward(request,response);
+   RequestDispatcher requestDispatcher = request.getRequestDispatcher("other.jsp");
+   requestDispatcher.forward(request,response);
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN013"
+language="java"
+  message="Avoid ServletResponse.addHeader(), use HTTPUtilities.safeSetHeader() instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'ServletResponse') and
+../../PrimarySuffix[ends-with(@Image,'addHeader')]
+) or
+(contains(@Image, 'response.addHeader'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   getServletResponse().addHeader("header-name","header-value");
+  }
+
+ public void handleResponse(HttpServletResponse response) {
+   response.addHeader("header-name","header-value");
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN014"
+language="java"
+  message="Avoid ServletResponse.addCookie(), use HTTPUtilities.safeAddCookie() instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'ServletResponse') and
+../../PrimarySuffix[ends-with(@Image,'addCookie')]
+) or
+(contains(@Image, 'response.addCookie'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+   
+  Cookie cookie;
+
+  public void foo()
+  {
+   getServletResponse().addCookie(cookie);
+  }
+
+ public void handleResponse(HttpServletResponse response) {
+   response.addCookie(cookie);
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN015"
+language="java"
+  message="Avoid ServletRequest.isSecure(), use HTTPUtilties.isSecureChannel() instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'ServletRequest') and
+../../PrimarySuffix[ends-with(@Image,'isSecure')]
+) or
+(contains(@Image, 'request.isSecure'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   getServletRequest().isSecure();
+  }
+
+ public void handleRequest(HttpServletRequest request) {
+   request.isSecure();
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN016"
+language="java"
+  message="If using sensitive data, avoid Properties.*, use EncryptedProperties.* instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>4</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//ClassOrInterfaceType[
+(contains(@Image, 'Properties'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   Properties prop = new Properties();
+  }
+
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN017"
+language="java"
+  message="Avoid ServletContext.log(), use Logger.* instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'ServletContext') and
+../../PrimarySuffix[ends-with(@Image,'log')]
+) or
+(contains(@Image, 'servletContext.log'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   getServletContext().log("Some message");
+   ServletContext servletContext = getServletContext;
+   servletContext.log("Some message");
+  }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN018"
+language="java"
+  message="Avoid java.security and javax.crypto, use Encryptor.* instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>4</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(starts-with(@Image,'java.security')) or
+(starts-with(@Image, 'javax.crypto'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+import java.security.*;
+import javax.crypto.*;
+
+public class foo {
+
+  public void foo()
+  {
+   // some code
+  }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN019"
+language="java"
+  message="Avoid java.net.URLEncoder/Decoder, use Encoder.encodeForURL()/decodeForURL() instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>4</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(starts-with(@Image,'java.net.URLEncoder')) or
+(starts-with(@Image,'java.net.URLDecoder'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+import java.net.URLEncoder.*;
+import java.net.URLDecoder.*;
+
+public class foo {
+
+  public void foo()
+  {
+   // some code
+  }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN020"
+language="java"
+  message="Avoid java.sql.Statement, use PreparedStatement instead"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(starts-with(@Image,'java.sql.Statement'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+import java.sql.Statement.*;
+
+public class foo {
+
+  public void foo()
+  {
+   // some code
+  }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN021"
+language="java"
+  message="Avoid ServletResponse.encodeURL(), use HTTPUtilities.safeEncodeURL(), or if possible not use at all"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'ServletResponse') and
+../../PrimarySuffix[ends-with(@Image,'encodeURL')]
+) or
+(contains(@Image, 'response.encodeURL'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   getServletResponse().encodeURL(someUrl);
+  }
+
+ public void handleResponse(HttpServletResponse response) {
+   response.encodeURL(someUrl);
+ }
+}
+]]>
+  </example>
+</rule>
+
+<rule  name="BAN022"
+language="java"
+  message="Avoid ServletResponse.encodeRedirectURL(), use HTTPUtilities.safeEncodeRedirectURL(), or if possible not use at all"
+  class="net.sourceforge.pmd.lang.rule.XPathRule">
+  <description>
+  Dangerous call, use the safer call with ESAPI
+  </description>
+  <priority>1</priority>
+  <properties>
+    <property name="xpath">
+    <value>
+<![CDATA[
+//Name[
+(
+contains(@Image,'ServletResponse') and
+../../PrimarySuffix[ends-with(@Image,'encodeRedirectURL')]
+) or
+(contains(@Image, 'response.encodeRedirectURL'))
+]
+]]>
+    </value>
+    </property>
+  </properties>
+  <example>
+<![CDATA[
+public class foo {
+
+  public void foo()
+  {
+   getServletResponse().encodeRedirectURL(someUrl);
+  }
+
+ public void handleResponse(HttpServletResponse response) {
+   response.encodeRedirectURL(someUrl);
+ }
+}
+]]>
+  </example>
+</rule>
+
+</ruleset>
